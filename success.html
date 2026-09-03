@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Order Confirmed – Hipkiss Farm Shop</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="images/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
+<link rel="apple-touch-icon" href="images/favicon-512.png">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital@0;1&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0a0a0a;--charcoal:#141414;--gold:#C9933A;--gold-light:#E8B55A;--cream:#F5F0E8;--white:#fff;--muted:#aaa;}
+*{margin:0;padding:0;box-sizing:border-box;}
+[hidden]{display:none!important;}
+body{background:var(--black);color:var(--white);font-family:'Lato',sans-serif;min-height:100vh;
+  display:flex;flex-direction:column;}
+a{color:inherit;}
+nav{background:rgba(10,10,10,0.95);border-bottom:1px solid rgba(201,147,58,0.3);display:flex;align-items:center;
+  justify-content:space-between;padding-left:40px;padding-right:40px;height:70px;flex-shrink:0;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);letter-spacing:4px;text-decoration:none;}
+.back-btn{color:var(--gold);text-decoration:none;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;
+  font-weight:700;border:1px solid rgba(201,147,58,0.4);padding-top:8px;padding-bottom:8px;padding-left:20px;padding-right:20px;transition:background 0.3s,color 0.3s;}
+.back-btn:hover{background:var(--gold);color:var(--black);}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+main{flex:1;display:flex;align-items:center;justify-content:center;
+  padding-top:60px;padding-bottom:60px;padding-left:20px;padding-right:20px;}
+.card{max-width:600px;width:100%;border:1px solid rgba(201,147,58,0.3);background:rgba(255,255,255,0.02);
+  padding-top:44px;padding-bottom:44px;padding-left:40px;padding-right:40px;}
+.preview-note{background:rgba(90,140,200,0.10);border:1px solid rgba(120,170,225,0.5);color:#9fc4e8;
+  text-align:center;font-size:0.78rem;line-height:1.6;font-weight:700;letter-spacing:1px;
+  padding-top:12px;padding-bottom:12px;padding-left:18px;padding-right:18px;margin-bottom:26px;}
+.tick{width:62px;height:62px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;
+  justify-content:center;margin:0 auto 24px;}
+.tick svg{width:28px;height:28px;color:var(--gold);}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,2.8rem);letter-spacing:3px;text-align:center;line-height:1.05;margin-bottom:12px;}
+.sub{text-align:center;color:var(--muted);font-size:0.95rem;line-height:1.7;margin-bottom:30px;}
+.ordernum{border:1px solid rgba(201,147,58,0.4);background:rgba(201,147,58,0.07);text-align:center;
+  padding-top:22px;padding-bottom:22px;padding-left:20px;padding-right:20px;margin-bottom:30px;}
+.ordernum .lbl{font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+.ordernum .num{font-family:'Bebas Neue',sans-serif;font-size:2.6rem;letter-spacing:5px;color:var(--gold-light);line-height:1;margin-top:8px;}
+.ordernum .hint{font-size:0.76rem;color:var(--muted);margin-top:10px;}
+.lines{border:1px solid rgba(255,255,255,0.08);margin-bottom:22px;}
+.line{padding-top:13px;padding-bottom:13px;padding-left:18px;padding-right:18px;
+  border-bottom:1px solid rgba(255,255,255,0.07);font-size:0.92rem;color:var(--cream);line-height:1.5;}
+.line:last-child{border-bottom:none;}
+.row{display:flex;justify-content:space-between;gap:16px;padding-top:11px;padding-bottom:11px;
+  border-bottom:1px solid rgba(255,255,255,0.07);font-size:0.9rem;}
+.row:last-of-type{border-bottom:none;}
+.row .k{color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-size:0.66rem;font-weight:700;padding-top:2px;}
+.row .v{color:var(--cream);text-align:right;line-height:1.5;}
+.next{background:rgba(201,147,58,0.06);border-left:2px solid var(--gold);margin-top:26px;
+  padding-top:16px;padding-bottom:16px;padding-left:20px;padding-right:20px;font-size:0.86rem;color:var(--muted);line-height:1.75;}
+.actions{margin-top:28px;text-align:center;}
+.btn-primary{background:var(--gold);color:var(--black);padding-top:14px;padding-bottom:14px;padding-left:34px;padding-right:34px;
+  font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:3px;text-decoration:none;display:inline-block;transition:background 0.3s;}
+.btn-primary:hover{background:var(--gold-light);}
+.phone{text-align:center;margin-top:22px;font-size:0.86rem;color:var(--muted);line-height:1.7;}
+.phone a{color:var(--gold);text-decoration:none;font-weight:700;}
+.muted-state{text-align:center;color:var(--muted);font-size:0.95rem;line-height:1.8;}
+footer{background:#080808;border-top:1px solid rgba(201,147,58,0.2);text-align:center;
+  padding-top:26px;padding-bottom:26px;padding-left:20px;padding-right:20px;font-size:0.8rem;color:var(--muted);line-height:1.8;flex-shrink:0;}
+footer a{color:var(--gold);text-decoration:none;}
+@media(max-width:600px){
+  nav{padding-left:20px;padding-right:20px;}
+  .card{padding-left:24px;padding-right:24px;}
+}
+@media print{
+  body{background:#fff;color:#000;}
+  nav,footer,.actions,.phone{display:none;}
+  .card{border:1px solid #999;}
+  h1,.ordernum .num{color:#000;}
+  .row .v,.line{color:#000;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">HIPKISS</a>
+  <a href="index.html" class="back-btn">&larr; Back to Website</a>
+</nav>
+
+<main>
+  <div class="card">
+    <div id="loading" class="muted-state">Confirming your order…</div>
+
+    <div class="preview-note" id="preview-note" hidden>
+      Preview &mdash; this is the confirmation a customer receives. No payment was taken and no email has been sent.
+    </div>
+
+    <div id="done" hidden>
+      <div class="tick">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1>Order Confirmed</h1>
+      <p class="sub" id="sub">Thank you — your deposit has gone through and your order is in the book.</p>
+
+      <div class="ordernum">
+        <div class="lbl">Your Order Number</div>
+        <div class="num" id="num">—</div>
+        <div class="hint">Quote this when you collect</div>
+      </div>
+
+      <div class="lines" id="lines"></div>
+
+      <div class="row"><span class="k">Collection</span><span class="v" id="date"></span></div>
+      <div class="row"><span class="k">Deposit paid</span><span class="v" id="dep"></span></div>
+      <div class="row"><span class="k">Balance</span><span class="v">Paid in store on collection</span></div>
+      <div class="row" id="notes-row" hidden><span class="k">Your notes</span><span class="v" id="notes"></span></div>
+
+      <div class="next">
+        A confirmation email is on its way to <b id="email-out">your inbox</b>. Most of our meat is priced by weight, so we'll weigh and price your order when you collect, take off the deposit you've paid, and you settle the balance in store.
+      </div>
+
+      <div class="actions"><a href="index.html" class="btn-primary">Back to the Shop</a></div>
+      <p class="phone">Questions? Call us on <a href="tel:01902965477">01902 965477</a></p>
+    </div>
+
+    <div id="fallback" hidden>
+      <h1>Thank You</h1>
+      <p class="muted-state">Your payment went through. If your order number hasn't come through by email in the next few minutes, give us a ring on <a href="tel:01902965477" style="color:var(--gold);font-weight:700;text-decoration:none;">01902 965477</a> and we'll confirm it for you.</p>
+      <div class="actions"><a href="index.html" class="btn-primary">Back to the Shop</a></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  25-26 Anders Square, Wolverhampton, WV6 7QH &nbsp;&middot;&nbsp;
+  <a href="tel:01902965477">01902 965477</a> &nbsp;&middot;&nbsp;
+  <a href="index.html">hipkissbutchers.co.uk</a>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  function $(id) { return document.getElementById(id); }
+  function show(id) { $('loading').hidden = true; $(id).hidden = false; }
+
+  function render(o) {
+    $('num').textContent = o.orderNumber;
+    if (o.name) { $('sub').textContent = 'Thanks ' + o.name + ' — your deposit has gone through and your order is in the book.'; }
+    $('date').textContent = o.collectionDate || '';
+    $('dep').textContent = o.depositText || '';
+    if (o.email) { $('email-out').textContent = o.email; }
+
+    var host = $('lines');
+    (o.items || []).forEach(function (t) {
+      var d = document.createElement('div');
+      d.className = 'line';
+      d.textContent = t;
+      host.appendChild(d);
+    });
+    if (!host.children.length) { host.hidden = true; }
+
+    if (o.notes) { $('notes-row').hidden = false; $('notes').textContent = o.notes; }
+
+    document.title = 'Order ' + o.orderNumber + ' – Hipkiss Farm Shop';
+    show('done');
+  }
+
+  var qs = new URLSearchParams(window.location.search);
+
+  /* Preview: the order was stashed by the order page, no server involved. */
+  if (qs.get('preview') === '1') {
+    var stashed = null;
+    try { stashed = JSON.parse(sessionStorage.getItem('hipkiss_preview_order')); } catch (e) {}
+    if (stashed) {
+      $('preview-note').hidden = false;
+      render(stashed);
+      return;
+    }
+    show('fallback');
+    return;
+  }
+
+  var sid = qs.get('session_id');
+  if (!sid) { show('fallback'); return; }
+
+  fetch('/.netlify/functions/order-lookup?session_id=' + encodeURIComponent(sid))
+    .then(function (r) { return r.json(); })
+    .then(function (o) {
+      if (!o || !o.paid || !o.orderNumber) { show('fallback'); return; }
+      render(o);
+    })
+    .catch(function () { show('fallback'); });
+})();
+</script>
+</body>
+</html>
