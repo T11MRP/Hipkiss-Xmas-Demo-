@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gallery – Hipkiss Farm Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{--black:#0a0a0a;--charcoal:#141414;--gold:#C9933A;--white:#fff;--muted:#aaa;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--white);font-family:'Lato',sans-serif;}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.97);
+  border-bottom:1px solid rgba(201,147,58,0.3);display:flex;align-items:center;
+  justify-content:space-between;padding:0 40px;height:70px;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--white);letter-spacing:4px;text-decoration:none;}
+.back-btn{color:var(--gold);text-decoration:none;font-size:0.7rem;letter-spacing:2px;
+  text-transform:uppercase;font-weight:700;border:1px solid rgba(201,147,58,0.4);
+  padding:8px 20px;transition:all 0.3s;}
+.back-btn:hover{background:var(--gold);color:var(--black);}
+.hero{padding:80px 40px 50px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.hero-inner{max-width:1200px;margin:0 auto;}
+.section-label{font-size:0.65rem;letter-spacing:5px;text-transform:uppercase;
+  color:var(--gold);font-weight:700;display:block;margin-bottom:12px;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,7vw,5.5rem);letter-spacing:4px;line-height:1;}
+.gold-line{width:60px;height:2px;background:var(--gold);margin:20px 0 32px;}
+.filter-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:50px;}
+.tab{padding:8px 22px;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;
+  font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,0.15);
+  color:var(--muted);background:transparent;transition:all 0.25s;}
+.tab:hover,.tab.active{border-color:var(--gold);color:var(--gold);background:rgba(201,147,58,0.08);}
+.category{margin-bottom:80px;}
+.cat-header{display:flex;align-items:center;gap:20px;margin-bottom:28px;
+  padding-bottom:14px;border-bottom:1px solid rgba(201,147,58,0.2);}
+.cat-header h2{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:3px;}
+.cat-count{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);border:1px solid rgba(255,255,255,0.1);padding:4px 12px;}
+/* Grid layouts */
+.g-hero{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:300px 300px;gap:4px;}
+.g-hero .gi:first-child{grid-row:span 2;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;}
+.mt4{margin-top:4px;}
+/* Gallery items */
+.gi{position:relative;overflow:hidden;cursor:pointer;background:var(--charcoal);min-height:220px;}
+.gi img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s ease;}
+.gi:hover img{transform:scale(1.06);}
+.gi:focus-visible,.tab:focus-visible,.back-btn:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+.gi-label{position:absolute;bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,0.85));
+  padding:40px 16px 14px;opacity:0;transition:opacity 0.3s;}
+.gi:hover .gi-label{opacity:1;}
+.gi-label h3{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;}
+.gi-label p{font-size:0.7rem;color:var(--gold);letter-spacing:1px;}
+/* Lightbox */
+.lightbox{display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(0,0,0,0.96);align-items:center;justify-content:center;flex-direction:column;}
+.lightbox.active{display:flex;}
+.lightbox img{max-width:88vw;max-height:82vh;object-fit:contain;}
+.lb-close{position:absolute;top:20px;right:28px;font-size:1.8rem;color:var(--white);
+  cursor:pointer;opacity:0.7;transition:opacity 0.2s;font-family:'Bebas Neue',sans-serif;}
+.lb-close:hover{opacity:1;}
+.lb-caption{margin-top:20px;text-align:center;}
+.lb-caption h3{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:3px;}
+.lb-caption p{font-size:0.75rem;color:var(--gold);letter-spacing:2px;margin-top:4px;}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);font-size:2.5rem;
+  color:var(--white);cursor:pointer;padding:20px;opacity:0.5;
+  transition:opacity 0.2s;user-select:none;}
+.lb-nav:hover{opacity:1;}
+.lb-prev{left:8px;}.lb-next{right:8px;}
+footer{border-top:1px solid rgba(201,147,58,0.2);padding:36px 40px;
+  text-align:center;font-size:0.75rem;color:var(--muted);letter-spacing:2px;}
+@media(max-width:900px){
+  .g-hero{grid-template-columns:1fr 1fr;grid-template-rows:auto;}
+  .g-hero .gi:first-child{grid-row:span 1;}
+  .g3,.g4{grid-template-columns:1fr 1fr;}
+  nav{padding:0 16px;}
+  .hero{padding:60px 20px 40px;}
+}
+@media(max-width:500px){.g2,.g3,.g4{grid-template-columns:1fr;}
+  .g-hero{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">HIPKISS</a>
+  <a href="index.html" class="back-btn">← Back to Website</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <span class="section-label">Hipkiss Farm Shop</span>
+    <h1>Our Gallery</h1>
+    <div class="gold-line"></div>
+    <p style="color:var(--muted);font-size:0.95rem;max-width:600px;line-height:1.8;margin-bottom:36px;">
+      A look inside Hipkiss — from the butchery counter and hanging aged beef to our deli,
+      farm shop, bakery and freshly prepared foods. Click any image to view full size.
+    </p>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterAll(this)">All Photos</button>
+      <button class="tab" onclick="filterCat(this,'butchery')">Butchery</button>
+      <button class="tab" onclick="filterCat(this,'deli')">Delicatessen</button>
+      <button class="tab" onclick="filterCat(this,'prepared')">Prepared Foods</button>
+      <button class="tab" onclick="filterCat(this,'bakery')">Bakery</button>
+      <button class="tab" onclick="filterCat(this,'farmshop')">Farm Shop</button>
+      <button class="tab" onclick="filterCat(this,'shop')">The Shop</button>
+    </div>
+  </div>
+</div>
+
+<div style="max-width:1400px;margin:0 auto;padding:60px 40px;" id="gallery-body">
+
+  <!-- BUTCHERY -->
+  <div class="category" data-cat="butchery">
+    <div class="cat-header"><h2>🥩 Butchery</h2><span class="cat-count">7 Photos</span></div>
+    <div class="g-hero">
+      <div class="gi" role="button" tabindex="0" onclick="lb(0)" data-idx="0"><img loading="lazy" decoding="async" src="images/product-1.jpg" alt="Aged beef hanging">
+        <div class="gi-label"><h3>Aged On The Bone</h3><p>Premium beef, hung in-store</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(1)" data-idx="1"><img loading="lazy" decoding="async" src="images/product-2.jpg" alt="Marbled steaks">
+        <div class="gi-label"><h3>Premium Steaks</h3><p>Beautiful marbling</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(2)" data-idx="2"><img loading="lazy" decoding="async" src="images/product-3.jpg" alt="Pork counter">
+        <div class="gi-label"><h3>The Pork Counter</h3><p>Daily fresh cuts</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(3)" data-idx="3"><img loading="lazy" decoding="async" src="images/product-5.jpg" alt="Rosemary-tied lamb joints">
+        <div class="gi-label"><h3>Lamb Joints</h3><p>Tied with fresh rosemary</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(4)" data-idx="4"><img loading="lazy" decoding="async" src="images/product-6.jpg" alt="British beef roasting joints">
+        <div class="gi-label"><h3>Roasting Joints</h3><p>British beef</p></div></div>
+    </div>
+    <div class="g2 mt4">
+      <div class="gi" role="button" tabindex="0" onclick="lb(5)" data-idx="5"><img loading="lazy" decoding="async" src="images/product-4.jpg" alt="Handmade pigs in blankets">
+        <div class="gi-label"><h3>Pigs in Blankets</h3><p>Handmade in-store</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(6)" data-idx="6"><img loading="lazy" decoding="async" src="images/gallery-2.jpg" alt="Honey glazed hunters chicken">
+        <div class="gi-label"><h3>Honey Glazed Hunter's Chicken</h3><p>Ready to cook</p></div></div>
+    </div>
+  </div>
+
+  <!-- DELICATESSEN -->
+  <div class="category" data-cat="deli">
+    <div class="cat-header"><h2>🧀 Delicatessen</h2><span class="cat-count">5 Photos</span></div>
+    <div class="g3">
+      <div class="gi" role="button" tabindex="0" data-idx="7" style="grid-column:span 2;" onclick="lb(7)">
+        <img loading="lazy" decoding="async" src="images/gallery-1.jpg" alt="Deli counter wide">
+        <div class="gi-label"><h3>The Deli Counter</h3><p>Cheeses, charcuterie & more</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(8)" data-idx="8"><img loading="lazy" decoding="async" src="images/gallery-5.jpg" alt="Fine cheeses, olives and charcuterie counter">
+        <div class="gi-label"><h3>Fine Cheeses & Olives</h3><p>Artisan selection</p></div></div>
+    </div>
+    <div class="g3 mt4">
+      <div class="gi" role="button" tabindex="0" onclick="lb(9)" data-idx="9"><img loading="lazy" decoding="async" src="images/gallery-4.jpg" alt="Potts stock cans">
+        <div class="gi-label"><h3>Potts' Premium Stocks</h3><p>Available in-store</p></div></div>
+      <div class="gi" role="button" tabindex="0" data-idx="10" onclick="lb(10)" style="background:#1a1a1a;"><img loading="lazy" decoding="async" src="images/gallery-deli-honey.jpg" alt="Local Wolverhampton honey" style="object-fit:contain;object-position:center center;background:#1a1a1a;">
+        <div class="gi-label"><h3>Local Wolverhampton Honey</h3><p>Stocked in-store</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(11)" data-idx="11"><img loading="lazy" decoding="async" src="images/gallery-deli-crackers.jpg" alt="Crackers and chutney">
+        <div class="gi-label"><h3>Crackers & Chutney</h3><p>From the deli counter</p></div></div>
+    </div>
+  </div>
+
+  <!-- PREPARED FOODS -->
+  <div class="category" data-cat="prepared">
+    <div class="cat-header"><h2>🥧 Prepared Foods</h2><span class="cat-count">9 Photos</span></div>
+    <div class="g3">
+      <div class="gi" role="button" tabindex="0" data-idx="12" style="grid-column:span 2;" onclick="lb(12)">
+        <img loading="lazy" decoding="async" src="images/gallery-prep-fries1.jpg" alt="Loaded fries close up">
+        <div class="gi-label"><h3>Loaded Fries</h3><p>Spicy chicken, cheese & chilli</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(13)" data-idx="13"><img loading="lazy" decoding="async" src="images/gallery-prep-fries2.jpg" alt="Loaded fries trays">
+        <div class="gi-label"><h3>Loaded Fries</h3><p>Ready to go</p></div></div>
+    </div>
+    <div class="g3 mt4">
+      <div class="gi" role="button" tabindex="0" onclick="lb(14)" data-idx="14"><img loading="lazy" decoding="async" src="images/gallery-prep-pies1.jpg" alt="Russell's pies close">
+        <div class="gi-label"><h3>Russell's Pies</h3><p>Steak & Stilton, Chicken & Mushroom</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(15)" data-idx="15"><img loading="lazy" decoding="async" src="images/gallery-prep-pies2.jpg" alt="Russell's pies on shelf">
+        <div class="gi-label"><h3>Russell's Pies</h3><p>Full range in-store</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(16)" data-idx="16"><img loading="lazy" decoding="async" src="images/gallery-prep-pies3.jpg" alt="Steak and stilton pie">
+        <div class="gi-label"><h3>Large Steak & Stilton</h3><p>Russell's Pies</p></div></div>
+    </div>
+    <div class="g2 mt4">
+      <div class="gi" role="button" tabindex="0" onclick="lb(17)" data-idx="17"><img loading="lazy" decoding="async" src="images/gallery-prep-salad1.jpg" alt="Tangy sweet chilli chicken salad">
+        <div class="gi-label"><h3>Tangy Sweet Chilli Chicken Salad</h3><p>Pureety — deli fresh</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(18)" data-idx="18"><img loading="lazy" decoding="async" src="images/gallery-prep-salad2.jpg" alt="Samosas coleslaw quiche">
+        <div class="gi-label"><h3>Deli Fresh</h3><p>Samosas, salads, quiche & more</p></div></div>
+    </div>
+  </div>
+
+  <!-- BAKERY -->
+  <div class="category" data-cat="bakery">
+    <div class="cat-header"><h2>🍞 Bakery</h2><span class="cat-count">2 Photos</span></div>
+    <div class="g2">
+      <div class="gi" role="button" tabindex="0" onclick="lb(19)" data-idx="19"><img loading="lazy" decoding="async" src="images/gallery-bakery1.jpg" alt="Sourdough bread selection">
+        <div class="gi-label"><h3>Sourdough Selection</h3><p>Jalapeño, Cotswold Crunch, White</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(20)" data-idx="20"><img loading="lazy" decoding="async" src="images/gallery-bakery2.jpg" alt="Jalapeno sourdough">
+        <div class="gi-label"><h3>Jalapeño Sourdough</h3><p>Freshly baked</p></div></div>
+    </div>
+  </div>
+
+  <!-- FARM SHOP -->
+  <div class="category" data-cat="farmshop">
+    <div class="cat-header"><h2>🌿 Farm Shop</h2><span class="cat-count">3 Photos</span></div>
+    <div class="g3">
+      <div class="gi" role="button" tabindex="0" data-idx="21" style="grid-column:span 2;" onclick="lb(21)">
+        <img loading="lazy" decoding="async" src="images/about.jpg" alt="Fruit veg and salad">
+        <div class="gi-label"><h3>Fruit, Veg & Salad</h3><p>Fresh & seasonal produce</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(22)" data-idx="22"><img loading="lazy" decoding="async" src="images/gallery-3.jpg" alt="Beekers Berries strawberries">
+        <div class="gi-label"><h3>Beekers Berries</h3><p>Fresh British strawberries</p></div></div>
+    </div>
+    <div class="g2 mt4">
+      <div class="gi" role="button" tabindex="0" onclick="lb(23)" data-idx="23"><img loading="lazy" decoding="async" src="images/gallery-3.jpg" alt="Beekers strawberries close">
+        <div class="gi-label"><h3>Beekers Berries</h3><p>Summer's finest</p></div></div>
+    </div>
+  </div>
+
+  <!-- THE SHOP -->
+  <div class="category" data-cat="shop">
+    <div class="cat-header"><h2>🏪 The Shop</h2><span class="cat-count">2 Photos</span></div>
+    <div class="g2">
+      <div class="gi" role="button" tabindex="0" onclick="lb(24)" data-idx="24"><img loading="lazy" decoding="async" src="images/hero-bg.jpg" alt="Hipkiss storefront">
+        <div class="gi-label"><h3>The Storefront</h3><p>Wrottesley Park Rd, Perton</p></div></div>
+      <div class="gi" role="button" tabindex="0" onclick="lb(25)" data-idx="25"><img loading="lazy" decoding="async" src="images/product-3.jpg" alt="Meat counter interior">
+        <div class="gi-label"><h3>Inside the Shop</h3><p>Our welcoming counter</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLbOut(event)">
+  <span class="lb-close" onclick="closeLb()">✕</span>
+  <span class="lb-nav lb-prev" onclick="navLb(-1)">&#8592;</span>
+  <img id="lb-img" src="" alt="">
+  <div class="lb-caption"><h3 id="lb-title"></h3><p id="lb-cat"></p></div>
+  <span class="lb-nav lb-next" onclick="navLb(1)">&#8594;</span>
+</div>
+
+<footer>© 2025 Hipkiss Farm Shop · Quality Butchers · Delicatessen · Farm Shop · Perton, Wolverhampton WV6 7QH</footer>
+
+<script>
+const imgs=[
+  {s:"images/product-1.jpg",t:"Aged On The Bone",c:"Butchery"},
+  {s:"images/product-2.jpg",t:"Premium Marbled Steaks",c:"Butchery"},
+  {s:"images/product-3.jpg",t:"The Pork Counter",c:"Butchery"},
+  {s:"images/product-5.jpg",t:"Rosemary Lamb Joints",c:"Butchery"},
+  {s:"images/product-6.jpg",t:"British Beef Roasting Joints",c:"Butchery"},
+  {s:"images/product-4.jpg",t:"Handmade Pigs in Blankets",c:"Butchery"},
+  {s:"images/gallery-2.jpg",t:"Honey Glazed Hunter's Chicken",c:"Butchery"},
+  {s:"images/gallery-1.jpg",t:"The Deli Counter",c:"Delicatessen"},
+  {s:"images/gallery-5.jpg",t:"Fine Cheeses & Olives",c:"Delicatessen"},
+  {s:"images/gallery-4.jpg",t:"Potts' Premium Stocks",c:"Delicatessen"},
+  {s:"images/gallery-deli-honey.jpg",t:"Local Wolverhampton Honey",c:"Delicatessen"},
+  {s:"images/gallery-deli-crackers.jpg",t:"Crackers & Chutney",c:"Delicatessen"},
+  {s:"images/gallery-prep-fries1.jpg",t:"Loaded Fries – Close Up",c:"Prepared Foods"},
+  {s:"images/gallery-prep-fries2.jpg",t:"Loaded Fries – Ready to Go",c:"Prepared Foods"},
+  {s:"images/gallery-prep-pies1.jpg",t:"Russell's Pies Selection",c:"Prepared Foods"},
+  {s:"images/gallery-prep-pies2.jpg",t:"Russell's Pies – Full Range",c:"Prepared Foods"},
+  {s:"images/gallery-prep-pies3.jpg",t:"Large Steak & Stilton Pie",c:"Prepared Foods"},
+  {s:"images/gallery-prep-salad1.jpg",t:"Tangy Sweet Chilli Chicken Salad",c:"Prepared Foods"},
+  {s:"images/gallery-prep-salad2.jpg",t:"Deli Fresh – Samosas & Salads",c:"Prepared Foods"},
+  {s:"images/gallery-bakery1.jpg",t:"Sourdough Selection",c:"Bakery"},
+  {s:"images/gallery-bakery2.jpg",t:"Jalapeño Sourdough",c:"Bakery"},
+  {s:"images/about.jpg",t:"Fruit, Veg & Salad",c:"Farm Shop"},
+  {s:"images/gallery-3.jpg",t:"Beekers Berries Strawberries",c:"Farm Shop"},
+  {s:"images/gallery-3.jpg",t:"Beekers Berries – Summer Picks",c:"Farm Shop"},
+  {s:"images/hero-bg.jpg",t:"The Storefront",c:"The Shop"},
+  {s:"images/product-3.jpg",t:"Inside the Shop",c:"The Shop"},
+];
+let ci=0;
+function lb(i){ci=i;const x=imgs[i];
+  document.getElementById('lb-img').src=x.s;
+  document.getElementById('lb-title').textContent=x.t;
+  document.getElementById('lb-cat').textContent=x.c;
+  document.getElementById('lightbox').classList.add('active');
+  document.body.style.overflow='hidden';}
+function closeLb(){document.getElementById('lightbox').classList.remove('active');document.body.style.overflow='';}
+function closeLbOut(e){if(e.target===document.getElementById('lightbox'))closeLb();}
+function navLb(d){ci=(ci+d+imgs.length)%imgs.length;lb(ci);}
+document.addEventListener('keydown',e=>{
+  if(!document.getElementById('lightbox').classList.contains('active'))return;
+  if(e.key==='Escape')closeLb();
+  if(e.key==='ArrowLeft')navLb(-1);
+  if(e.key==='ArrowRight')navLb(1);
+});
+// Keyboard activation for gallery tiles (Enter / Space)
+document.getElementById('gallery-body').addEventListener('keydown',e=>{
+  const tile=e.target.closest('.gi[data-idx]');
+  if(!tile)return;
+  if(e.key==='Enter'||e.key===' '){e.preventDefault();lb(parseInt(tile.dataset.idx,10));}
+});
+function filterAll(btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');document.querySelectorAll('.category').forEach(c=>c.style.display='');}
+function filterCat(btn,cat){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');document.querySelectorAll('.category').forEach(c=>
+  c.style.display=c.dataset.cat===cat?'':'none');}
+</script>
+</body>
+</html>
