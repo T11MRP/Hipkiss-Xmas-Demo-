@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hipkiss Pizza · Stone Baked Menu</title>
+<meta name="description" content="Hipkiss Farm Shop stone-baked pizza menu. Available at the deli counter Thursday, Friday and Saturday, 12–5:30pm.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#0a0a0a; --charcoal:#141414; --cream:#F5F0E8;
+    --gold:#C9933A; --gold-light:#e0b45f; --muted:#aaa; --white:#fff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    font-family:'Lato',sans-serif;background:var(--black);color:var(--cream);
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:0 20px 60px;}
+
+  /* Header */
+  header{text-align:center;padding-top:44px;padding-bottom:8px;}
+  .brand{
+    font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:6px;
+    color:var(--white);text-decoration:none;display:inline-block;
+  }
+  .brand-sub{
+    display:block;font-size:0.62rem;letter-spacing:3px;color:var(--muted);
+    text-transform:uppercase;margin-top:4px;
+  }
+
+  /* Title block */
+  .title-block{text-align:center;padding:36px 0 8px;}
+  .eyebrow{
+    display:inline-block;font-size:0.62rem;letter-spacing:3px;color:var(--gold);
+    text-transform:uppercase;font-weight:700;margin-bottom:14px;
+  }
+  h1{
+    font-family:'Bebas Neue',sans-serif;font-size:4rem;line-height:0.9;
+    letter-spacing:2px;color:var(--white);text-transform:uppercase;
+  }
+  .gold-line{width:60px;height:2px;background:var(--gold);margin:20px auto 22px;}
+  .lead{color:var(--muted);font-size:0.95rem;max-width:420px;margin:0 auto;}
+
+  /* Serving times pill */
+  .serving{
+    display:inline-flex;flex-wrap:wrap;align-items:center;justify-content:center;
+    gap:10px;margin:24px auto 0;padding:12px 22px;
+    border:1px solid rgba(201,147,58,0.35);border-radius:100px;
+    background:rgba(201,147,58,0.06);
+  }
+  .serving .lbl{
+    font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:var(--gold);
+    font-size:0.95rem;
+  }
+  .serving .dot{width:4px;height:4px;border-radius:50%;background:var(--gold);opacity:0.6;}
+  .serving .val{font-size:0.9rem;color:var(--cream);letter-spacing:0.5px;}
+
+  /* Menu items */
+  .menu{margin-top:44px;}
+  .item{
+    display:flex;align-items:center;gap:18px;
+    padding:16px;border-radius:14px;background:var(--charcoal);
+    border:1px solid rgba(255,255,255,0.05);
+    box-shadow:0 2px 12px rgba(0,0,0,0.35);
+    margin-bottom:14px;
+  }
+  .item-img{
+    width:96px;height:96px;flex-shrink:0;border-radius:10px;object-fit:cover;
+    background:#1c1c1c;display:block;
+  }
+  .item-body{flex:1;min-width:0;}
+  .item-tag{
+    font-family:'Playfair Display',serif;font-style:italic;font-size:0.78rem;
+    color:var(--gold);margin-bottom:2px;
+  }
+  .item-body h2{
+    font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:1px;
+    color:var(--white);line-height:1;margin-bottom:6px;
+  }
+  .item-body p{font-size:0.82rem;color:var(--muted);line-height:1.4;}
+
+  /* Sizes / prices */
+  .sizes{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:30px;
+  }
+  .size{
+    text-align:center;padding:24px 16px;border-radius:14px;
+    background:linear-gradient(160deg,rgba(201,147,58,0.10),rgba(201,147,58,0.02));
+    border:1px solid rgba(201,147,58,0.30);
+  }
+  .size .in{
+    font-family:'Bebas Neue',sans-serif;font-size:1.9rem;letter-spacing:1px;
+    color:var(--white);line-height:1;
+  }
+  .size .serves{font-size:0.72rem;color:var(--muted);letter-spacing:1px;
+    text-transform:uppercase;margin:6px 0 12px;}
+  .size .price{
+    font-family:'Bebas Neue',sans-serif;font-size:2.4rem;letter-spacing:1px;
+    color:var(--gold);line-height:1;
+  }
+
+  /* Note + footer */
+  .note{
+    text-align:center;margin-top:30px;font-size:0.85rem;color:var(--muted);
+    padding:16px;border-top:1px solid rgba(255,255,255,0.07);
+    border-bottom:1px solid rgba(255,255,255,0.07);
+  }
+  .note strong{color:var(--cream);font-weight:700;}
+  footer{text-align:center;margin-top:36px;}
+  .home-link{
+    display:inline-block;color:var(--gold);text-decoration:none;
+    font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;font-weight:700;
+    border:1px solid rgba(201,147,58,0.4);border-radius:100px;
+    padding:13px 32px;transition:background 0.25s,color 0.25s;
+  }
+  .home-link:hover,.home-link:active{background:var(--gold);color:var(--black);}
+  .addr{margin-top:22px;font-size:0.72rem;color:#666;letter-spacing:0.5px;line-height:1.7;}
+
+  /* Small phones */
+  @media(max-width:400px){
+    h1{font-size:3.2rem;}
+    .item{gap:14px;padding:13px;}
+    .item-img{width:78px;height:78px;}
+    .item-body h2{font-size:1.45rem;}
+    .sizes{gap:10px;}
+    .size{padding:20px 10px;}
+    .size .price{font-size:2rem;}
+  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="brand" href="index.html">HIPKISS<span class="brand-sub">Quality Butchers · Deli · Farm Shop</span></a>
+  </header>
+
+  <div class="title-block">
+    <span class="eyebrow">Stone Baked · Fresh Ingredients</span>
+    <h1>Pizza</h1>
+    <div class="gold-line"></div>
+    <p class="lead">Hand-finished at the deli counter. Take one home ready to bake, or grab a slice while you shop.</p>
+
+    <div class="serving">
+      <span class="lbl">Fresh</span>
+      <span class="dot"></span>
+      <span class="val">Thu · Fri · Sat &nbsp;·&nbsp; 12:00 – 5:30pm</span>
+    </div>
+  </div>
+
+  <div class="menu">
+
+    <div class="item">
+      <img class="item-img" src="images/pizza-cheese.png" alt="Cheese and tomato pizza" loading="lazy" decoding="async">
+      <div class="item-body">
+        <div class="item-tag">The Classic</div>
+        <h2>Cheese &amp; Tomato</h2>
+        <p>Rich tomato sauce and melted mozzarella.</p>
+      </div>
+    </div>
+
+    <div class="item">
+      <img class="item-img" src="images/pizza-pepperoni.jpg" alt="Pepperoni pizza" loading="lazy" decoding="async">
+      <div class="item-body">
+        <div class="item-tag">The Favourite</div>
+        <h2>Pepperoni</h2>
+        <p>Premium pepperoni, tomato base, mozzarella.</p>
+      </div>
+    </div>
+
+    <div class="item">
+      <img class="item-img" src="images/pizza-veg.jpg" alt="Vegetable pizza with mushroom, pepper and red onion" loading="lazy" decoding="async">
+      <div class="item-body">
+        <div class="item-tag">The Veg Option</div>
+        <h2>Veg</h2>
+        <p>Mushroom, pepper &amp; red onion, tomato &amp; mozzarella.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sizes">
+    <div class="size">
+      <div class="in">10 inch</div>
+      <div class="serves">Serves 1–2</div>
+      <div class="price">£8.99</div>
+    </div>
+    <div class="size">
+      <div class="in">12 inch</div>
+      <div class="serves">Serves 2–3</div>
+      <div class="price">£11.99</div>
+    </div>
+  </div>
+
+  <p class="note">Ask at the <strong>deli counter</strong> to order.</p>
+
+  <footer>
+    <a class="home-link" href="index.html">Visit the Full Site →</a>
+    <p class="addr">Hipkiss Farm Shop · Perton, Wolverhampton WV6 7QH<br>01902 965477</p>
+  </footer>
+
+</div>
+</body>
+</html>
