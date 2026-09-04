@@ -36,6 +36,11 @@
       maxQtyPerItem: 10      /* most of any single thing */
     },
 
+    /* Shown on the joints, where the customer sizes the order themselves. */
+    weightNote: 'Weights are a guide \u2014 we\u2019ll get as close as we can on the day.',
+    peopleNote: 'Not sure what weight you need? Put in the number of people you\u2019re feeding and our expert butchers will sort the rest.',
+    sizeHelp: 'Still not sure? Give us a ring on 01902 965477 and we\u2019ll talk it through.',
+
     /* CONFIRM WITH RICHARD before go-live. Orders stop at 23:59 on this date. */
     ordersCloseISO: '2026-12-14',
     ordersCloseLabel: 'Monday 14 December',
@@ -170,11 +175,61 @@
         name: 'Beef',
         blurb: 'Joints prepared by our butchers.',
         items: [
-          { id: 'topside',        name: 'Topside of Beef Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'sirloin',        name: 'Sirloin of Beef Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'rib',            name: 'Rib of Beef Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'fillet',         name: 'Fillet of Beef Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'beef-wellington', name: 'Beef Wellington', sideNote: 'Weight chosen on collection' }
+          {
+            id: 'topside',
+            name: 'Topside of Beef Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 8 },
+            people: { min: 1, max: 25 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'sirloin',
+            name: 'Sirloin of Beef Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 8 },
+            people: { min: 1, max: 25 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'rib',
+            name: 'Rib of Beef Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1.5, max: 9 },
+            people: { min: 1, max: 22 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'fillet',
+            name: 'Fillet of Beef Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 0.5, max: 3 },
+            people: { min: 1, max: 14 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'beef-wellington',
+            name: 'Beef Wellington',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 0.5, max: 3 },
+            people: { min: 1, max: 14 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          }
         ]
       },
 
@@ -183,12 +238,72 @@
         name: 'Pork & Gammon',
         blurb: 'Boneless joints and gammons.',
         items: [
-          { id: 'loin-boneless',     name: 'Boneless Loin of Pork', sideNote: 'Weight chosen on collection' },
-          { id: 'leg-boneless',      name: 'Boneless Leg of Pork', sideNote: 'Weight chosen on collection' },
-          { id: 'shoulder-boneless', name: 'Boneless Shoulder of Pork', sideNote: 'Weight chosen on collection' },
-          { id: 'draft-boneless',    name: 'Boneless Draft of Pork Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'gammon',            name: 'Gammon Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'gammon-honey',      name: 'Honey Glazed Gammon Joint', sideNote: 'Weight chosen on collection' }
+          {
+            id: 'loin-boneless',
+            name: 'Boneless Loin of Pork',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 7 },
+            people: { min: 1, max: 22 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'leg-boneless',
+            name: 'Boneless Leg of Pork',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1.5, max: 8 },
+            people: { min: 1, max: 26 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'shoulder-boneless',
+            name: 'Boneless Shoulder of Pork',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1.5, max: 8 },
+            people: { min: 1, max: 26 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'draft-boneless',
+            name: 'Boneless Draft of Pork Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 7 },
+            people: { min: 1, max: 22 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'gammon',
+            name: 'Gammon Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 7 },
+            people: { min: 1, max: 28 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'gammon-honey',
+            name: 'Honey Glazed Gammon Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 7 },
+            people: { min: 1, max: 28 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          }
         ]
       },
 
@@ -197,11 +312,61 @@
         name: 'Lamb',
         blurb: 'On the bone or boned and rolled.',
         items: [
-          { id: 'leg',              name: 'Leg of Lamb Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'leg-boneless',     name: 'Boneless Leg of Lamb Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'shoulder',         name: 'Shoulder of Lamb Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'shoulder-boneless', name: 'Boneless Shoulder of Lamb Joint', sideNote: 'Weight chosen on collection' },
-          { id: 'rack',             name: 'Rack of Lamb', sideNote: 'Weight chosen on collection' }
+          {
+            id: 'leg',
+            name: 'Leg of Lamb Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1.5, max: 4 },
+            people: { min: 1, max: 13 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'leg-boneless',
+            name: 'Boneless Leg of Lamb Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 3.5 },
+            people: { min: 1, max: 14 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'shoulder',
+            name: 'Shoulder of Lamb Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 3.5 },
+            people: { min: 1, max: 11 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'shoulder-boneless',
+            name: 'Boneless Shoulder of Lamb Joint',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 1, max: 3.5 },
+            people: { min: 1, max: 12 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          },
+          {
+            id: 'rack',
+            name: 'Rack of Lamb',
+            optionsLabel: 'How would you like to size it?',
+            custom: { min: 0.5, max: 3 },
+            people: { min: 1, max: 12 },
+            options: [
+              { id: 'custom', custom: true, label: 'Choose my own weight', serves: 'Tell us the size in kg' },
+              { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+            ]
+          }
         ]
       },
 

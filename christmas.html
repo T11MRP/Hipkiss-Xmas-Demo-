@@ -152,6 +152,34 @@ section{padding-top:90px;padding-bottom:90px;padding-left:40px;padding-right:40p
 .opt.on:hover{background:var(--gold-light);border-color:var(--gold-light);}
 .opt.single{min-width:150px;}
 
+/* two-line weight buttons: the size on top, who it feeds underneath */
+.opt.two{flex-direction:column;align-items:center;justify-content:center;gap:3px;line-height:1.2;
+  min-height:62px;padding-top:10px;padding-bottom:10px;min-width:118px;}
+.opt .opt-main{font-size:0.95rem;font-weight:700;}
+.opt .opt-sub{font-size:0.68rem;font-weight:400;letter-spacing:0.5px;color:var(--muted);}
+.opt.two.pick .opt-main{font-size:0.86rem;}
+.opt.two.sizer{flex:1 1 220px;max-width:300px;}
+.cw .cw-note{flex:1 1 100%;font-size:0.8rem;color:var(--gold);font-style:italic;line-height:1.6;}
+.opt.on .opt-sub{color:rgba(0,0,0,0.6);}
+
+/* "choose my own weight" panel */
+.cw{display:none;align-items:center;gap:14px;flex-wrap:wrap;margin-top:14px;
+  border:1px solid rgba(201,147,58,0.35);background:rgba(201,147,58,0.05);
+  padding-top:13px;padding-bottom:13px;padding-left:16px;padding-right:16px;}
+.cw.show{display:flex;}
+.cw label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;}
+.cw .wrapin{position:relative;display:inline-flex;align-items:center;}
+.cw input{width:118px;background:rgba(10,10,10,0.6);border:1px solid rgba(201,147,58,0.35);color:var(--white);
+  font-family:'Lato',sans-serif;font-size:1rem;min-height:46px;
+  padding-top:11px;padding-bottom:11px;padding-left:14px;padding-right:36px;transition:border-color 0.25s;}
+.cw input:focus{border-color:var(--gold);outline:none;}
+.cw .unit{position:absolute;right:13px;color:var(--muted);font-size:0.85rem;pointer-events:none;}
+.cw .cw-hint{font-size:0.76rem;color:var(--muted);line-height:1.5;}
+.cw .cw-err{color:#e0794f;}
+.size-help{font-size:0.8rem;color:var(--gold);font-style:italic;line-height:1.6;margin-top:12px;}
+.size-help a{color:var(--gold);font-weight:700;text-decoration:none;white-space:nowrap;}
+.size-help a:hover{color:var(--gold-light);}
+
 /* quantity, on the right of the choices */
 .qty-box{display:none;align-items:stretch;flex:0 0 auto;margin-left:auto;
   border:1px solid rgba(201,147,58,0.5);min-height:46px;}
@@ -277,6 +305,11 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
   .cat-head{padding-left:18px;padding-right:18px;}
   .field-row{grid-template-columns:1fr;gap:0;}
   .opt{padding-left:15px;padding-right:15px;font-size:0.85rem;}
+  .opt.two{flex:1 1 calc(50% - 5px);min-width:0;}
+  .opt.two.pick{flex:1 1 100%;}
+  .opt.two.sizer{flex:1 1 100%;max-width:none;}
+  .cw{gap:10px;}
+  .cw .cw-hint{flex:1 1 100%;}
   .choose-row{gap:14px;}
   .qty-box{margin-left:0;margin-top:2px;}
   .progress .txt{display:none;}
@@ -537,6 +570,13 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
   var details = { name: '', phone: '', email: '', notes: '', dateId: '' };
   var step = 1;
 
+  /* Products where "choose my own weight" is open but no valid weight has
+     been typed yet — they are deliberately NOT in the order until it is. */
+  var pendingWeights = {};
+
+  /* 2 -> "2", 2.5 -> "2.5" — no trailing zeros in front of a customer. */
+  function fmtKg(n) { return String(Math.round(Number(n) * 10) / 10); }
+
   function indexOfKey(key) {
     for (var i = 0; i < chosen.length; i++) { if (chosen[i].key === key) { return i; } }
     return -1;
@@ -614,6 +654,7 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
   function renderItem(cat, item) {
     var row = el('div', 'item');
     var bodyId = 'item-' + cat.id + '-' + item.id;
+    var pkey = cat.id + '|' + item.id;
 
     /* --- collapsed head: just the product name --- */
     var head = el('button', 'item-head');
@@ -641,6 +682,14 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
       ? item.options
       : [{ id: '', label: 'Add to order', pickedLabel: 'Added' }];
 
+    /* Options that ask the customer to type something: a weight, or how
+       many people they are feeding. Nothing is added to the order until
+       that number is usable. */
+    var sizers = [];
+    choices.forEach(function (o) { if (o.custom || o.people) { sizers.push(o); } });
+
+    if (sizers.length && C.weightNote) { body.appendChild(el('div', 'single-note', C.weightNote)); }
+
     if (item.options && item.options.length) {
       body.appendChild(el('div', 'opt-label', item.optionsLabel || 'Choose an option'));
     }
@@ -648,14 +697,26 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
     var chooseRow = el('div', 'choose-row');
     var opts = el('div', 'opts');
     opts.setAttribute('role', 'group');
-    opts.setAttribute('aria-label', item.name + ' — ' + (item.optionsLabel || 'options'));
+    opts.setAttribute('aria-label', item.name + ' \u2014 ' + (item.optionsLabel || 'options'));
     var buttons = [];
 
     choices.forEach(function (o) {
-      var b = el('button', 'opt' + (o.id ? '' : ' single'), o.label);
+      var cls = 'opt';
+      if (!o.id) { cls += ' single'; }
+      if (o.serves) { cls += ' two'; }
+      if (o.custom || o.people) { cls += ' pick sizer'; }
+      var b = el('button', cls);
       b.type = 'button';
+      if (o.serves) {
+        b.appendChild(el('span', 'opt-main', o.label));
+        b.appendChild(el('span', 'opt-sub', o.serves));
+      } else {
+        b.textContent = o.label;
+      }
       b.setAttribute('aria-pressed', 'false');
+      b.setAttribute('aria-label', item.name + ' \u2014 ' + o.label + (o.serves ? ', ' + o.serves : ''));
       b._optionId = o.id || '';
+      b._sizer = !!(o.custom || o.people);
       b._plain = o.label;
       b._picked = o.pickedLabel || o.label;
       b.addEventListener('click', function () { choose(o); });
@@ -665,12 +726,12 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
     chooseRow.appendChild(opts);
 
     /* One quantity control for the product, sitting to the right of the
-       choices — the buttons themselves never change size. */
+       choices \u2014 the buttons themselves never change size. */
     var qtyBox = el('div', 'qty-box');
     qtyBox.setAttribute('role', 'group');
     qtyBox.setAttribute('aria-label', 'Quantity of ' + item.name);
     qtyBox.appendChild(el('span', 'lab', 'Qty'));
-    var minus = el('button', 'qstep', '−');
+    var minus = el('button', 'qstep', '\u2212');
     minus.type = 'button';
     minus.setAttribute('aria-label', 'One fewer ' + item.name);
     var n = el('span', 'n', '1');
@@ -685,6 +746,51 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
 
     body.appendChild(chooseRow);
 
+    /* --- one typed panel per sizing route: a weight, or a headcount --- */
+    var panels = [];
+    sizers.forEach(function (o) {
+      var isPeople = !!o.people;
+      var lim = isPeople ? (item.people || { min: 1, max: 30 }) : (item.custom || { min: 0.5, max: 10 });
+
+      var box = el('div', 'cw');
+      var lab = el('label', null, isPeople ? 'How many people' : 'Your weight');
+      var inputId = 'sz-' + cat.id + '-' + item.id + '-' + o.id;
+      lab.setAttribute('for', inputId);
+      box.appendChild(lab);
+
+      var inWrap = el('span', 'wrapin');
+      var input = el('input');
+      input.type = 'text';
+      input.id = inputId;
+      input.setAttribute('inputmode', isPeople ? 'numeric' : 'decimal');
+      input.autocomplete = 'off';
+      input.placeholder = isPeople ? '6' : fmtKg(lim.min);
+      input.setAttribute('aria-label',
+        (isPeople ? 'Number of people to feed with ' : 'Weight in kilograms for ') + item.name);
+      inWrap.appendChild(input);
+      if (!isPeople) { inWrap.appendChild(el('span', 'unit', 'kg')); }
+      box.appendChild(inWrap);
+
+      box.appendChild(el('span', 'cw-hint', isPeople
+        ? ('Up to ' + lim.max + ' people')
+        : ('Anywhere between ' + fmtKg(lim.min) + 'kg and ' + fmtKg(lim.max) + 'kg')));
+
+      var msg = el('span', 'cw-hint cw-err');
+      msg.setAttribute('aria-live', 'polite');
+      box.appendChild(msg);
+
+      if (isPeople && C.peopleNote) { box.appendChild(el('span', 'cw-note', C.peopleNote)); }
+
+      var panel = { optionId: o.id, isPeople: isPeople, lim: lim, box: box, input: input, msg: msg };
+      panels.push(panel);
+
+      input.addEventListener('input', function () { commitTyped(panel); });
+      input.addEventListener('blur', function () { commitTyped(panel); });
+      body.appendChild(box);
+    });
+
+    if (sizers.length && C.sizeHelp) { body.appendChild(helpLine(C.sizeHelp)); }
+
     /* Only one choice per product can be active at a time. */
     function currentIndex() {
       for (var i = 0; i < chosen.length; i++) {
@@ -694,6 +800,33 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
     }
 
     function choose(o) {
+      /* A sizing button opens its box rather than adding anything \u2014 there is
+         nothing to add until we know the weight or the number of people. */
+      if (o.custom || o.people) {
+        var atc = currentIndex();
+        var held = pendingWeights[pkey];
+        var already = (atc > -1 && chosen[atc].optionId === o.id) || (held && held.optionId === o.id);
+        if (already) {                                 // tapping it again clears it
+          if (atc > -1) { chosen.splice(atc, 1); }
+          delete pendingWeights[pkey];
+          flash('msg-1', '');
+          refreshAll();
+          return;
+        }
+        var keepQty = atc > -1 ? chosen[atc].qty : (held ? held.qty : 1);
+        if (atc > -1) { chosen.splice(atc, 1); }       // switching between the two routes
+        pendingWeights[pkey] = { name: item.name, qty: keepQty, optionId: o.id };
+        flash('msg-1', '');
+        refreshAll();
+        panels.forEach(function (pn) {
+          if (pn.optionId === o.id) { try { pn.input.focus(); } catch (e) {} }
+        });
+        return;
+      }
+
+      delete pendingWeights[pkey];
+      panels.forEach(function (pn) { pn.msg.textContent = ''; });
+
       var at = currentIndex();
       var optionId = o.id || '';
 
@@ -707,6 +840,8 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
       if (at > -1) {                        // switch choice, keep the quantity
         chosen[at].optionId = optionId;
         chosen[at].optionLabel = o.id ? o.label : '';
+        chosen[at].customWeight = null;
+        chosen[at].people = null;
         chosen[at].key = keyOf(cat.id, item.id, optionId);
         flash('msg-1', '');
         refreshAll();
@@ -714,14 +849,92 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
       }
 
       if (chosen.length >= C.deposit.maxItems) {
-        flash('msg-1', 'That is as much as we can take online — please give us a ring on 01902 965477 for anything more.');
+        flash('msg-1', 'That is as much as we can take online \u2014 please give us a ring on 01902 965477 for anything more.');
         return;
       }
       chosen.push({
         key: keyOf(cat.id, item.id, optionId), catId: cat.id, itemId: item.id,
         optionId: optionId, catName: cat.name, itemName: item.name,
-        optionLabel: o.id ? o.label : '', qty: 1
+        optionLabel: o.id ? o.label : '', customWeight: null, people: null, qty: 1
       });
+      flash('msg-1', '');
+      refreshAll();
+    }
+
+    /* Runs on every keystroke in a sizing box. A number that isn't usable
+       keeps the product OUT of the order rather than guessing at it. */
+    function commitTyped(pn) {
+      var raw = pn.input.value.trim().replace(',', '.');
+      raw = pn.isPeople ? raw.replace(/\s*(people|ppl|persons?)$/i, '').trim()
+                        : raw.replace(/\s*kgs?$/i, '').trim();
+      var at = currentIndex();
+      var held = pendingWeights[pkey];
+      var qty = at > -1 ? chosen[at].qty : (held ? held.qty : 1);
+      var lim = pn.lim;
+
+      function park(message) {                 // not orderable (yet)
+        var a = currentIndex();
+        if (a > -1 && chosen[a].optionId === pn.optionId) { chosen.splice(a, 1); }
+        pendingWeights[pkey] = { name: item.name, qty: qty, optionId: pn.optionId };
+        pn.msg.textContent = message || '';
+        refreshAll();
+      }
+
+      if (raw === '') { park(''); return; }
+
+      var v = Number(raw);
+      if (!isFinite(v) || v <= 0) {
+        park(pn.isPeople ? 'Please enter how many people you\u2019re feeding, like 6.'
+                         : 'Please enter a weight in kg, like ' + fmtKg(lim.min) + '.');
+        return;
+      }
+
+      var value, label;
+      if (pn.isPeople) {
+        if (Math.round(v) !== v) {
+          park('Please use a whole number of people.');
+          return;
+        }
+        if (v < lim.min || v > lim.max) {
+          park('We can size this one for up to ' + lim.max +
+               ' people online \u2014 for a bigger table give us a ring on 01902 965477.');
+          return;
+        }
+        value = v;
+        label = 'For ' + v + (v === 1 ? ' person' : ' people');
+      } else {
+        value = Math.round(v * 10) / 10;       // we work to 100g
+        if (value < lim.min || value > lim.max) {
+          park('We can do ' + fmtKg(lim.min) + 'kg to ' + fmtKg(lim.max) +
+               'kg online \u2014 for anything outside that give us a ring on 01902 965477.');
+          return;
+        }
+        label = fmtKg(value) + 'kg';
+      }
+
+      pn.msg.textContent = '';
+      delete pendingWeights[pkey];
+
+      var idx = currentIndex();
+      var fields = {
+        optionId: pn.optionId, optionLabel: label,
+        customWeight: pn.isPeople ? null : value,
+        people: pn.isPeople ? value : null,
+        key: keyOf(cat.id, item.id, pn.optionId)
+      };
+      if (idx > -1) {
+        for (var f in fields) { if (fields.hasOwnProperty(f)) { chosen[idx][f] = fields[f]; } }
+      } else {
+        if (chosen.length >= C.deposit.maxItems) {
+          flash('msg-1', 'That is as much as we can take online \u2014 please give us a ring on 01902 965477 for anything more.');
+          return;
+        }
+        chosen.push({
+          key: fields.key, catId: cat.id, itemId: item.id, optionId: fields.optionId,
+          catName: cat.name, itemName: item.name, optionLabel: fields.optionLabel,
+          customWeight: fields.customWeight, people: fields.people, qty: qty
+        });
+      }
       flash('msg-1', '');
       refreshAll();
     }
@@ -749,12 +962,22 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
     row._paint = function () {
       var at = currentIndex();
       var active = at > -1 ? chosen[at] : null;
+      var held = pendingWeights[pkey];
+      /* whichever sizing route is live: one being filled in, or one already set */
+      var openId = held ? held.optionId : (active ? active.optionId : null);
 
       buttons.forEach(function (b) {
-        var on = !!active && active.optionId === b._optionId;
+        var on = b._sizer ? (openId === b._optionId)
+                          : (!!active && !held && active.optionId === b._optionId);
         b.classList.toggle('on', on);
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
         if (b._plain !== b._picked) { b.textContent = on ? b._picked : b._plain; }
+      });
+
+      panels.forEach(function (pn) {
+        var show = openId === pn.optionId;
+        pn.box.classList.toggle('show', show);
+        if (!show && pn.input.value !== '') { pn.input.value = ''; pn.msg.textContent = ''; }
       });
 
       qtyBox.classList.toggle('show', !!active);
@@ -763,8 +986,8 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
       count.textContent = active ? String(active.qty) : '0';
       count.classList.toggle('show', !!active);
 
-      // a product holding a selection stays open so the quantity is reachable
-      if (active && body.hidden) {
+      // a product mid-selection stays open so the weight and quantity stay reachable
+      if ((active || held) && body.hidden) {
         head.setAttribute('aria-expanded', 'true');
         body.hidden = false;
       }
@@ -773,6 +996,20 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
     row.appendChild(head);
     row.appendChild(body);
     return row;
+  }
+
+  /* The shop's number stays tappable inside the "not sure?" line. */
+  function helpLine(text) {
+    var d = el('div', 'size-help');
+    var parts = String(text).split('01902 965477');
+    d.appendChild(document.createTextNode(parts[0]));
+    if (parts.length > 1) {
+      var a = el('a', null, '01902 965477');
+      a.href = 'tel:01902965477';
+      d.appendChild(a);
+      d.appendChild(document.createTextNode(parts.slice(1).join('01902 965477')));
+    }
+    return d;
   }
 
   /* Category bodies animate on max-height, so they must be re-measured
@@ -945,7 +1182,10 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
 
     var payload = {
       items: lines().map(function (l) {
-        return { catId: l.catId, itemId: l.itemId, optionId: l.optionId, qty: l.qty };
+        var line = { catId: l.catId, itemId: l.itemId, optionId: l.optionId, qty: l.qty };
+        if (l.customWeight != null) { line.customWeight = l.customWeight; }
+        if (l.people != null) { line.people = l.people; }
+        return line;
       }),
       customer: {
         name: details.name, phone: details.phone,
@@ -1030,6 +1270,12 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
 
     $('to-details').addEventListener('click', function () {
       if (totalQty() === 0) { return; }
+      var waiting = Object.keys(pendingWeights).map(function (k) { return pendingWeights[k].name; });
+      if (waiting.length) {
+        flash('msg-1', 'Please finish sizing ' + waiting.join(', ') +
+          ' \u2014 give us a weight or a number of people, or tap the option again to clear it.');
+        return;
+      }
       goto(2);
     });
     $('to-review').addEventListener('click', function () {
