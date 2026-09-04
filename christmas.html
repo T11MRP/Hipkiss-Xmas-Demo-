@@ -79,7 +79,9 @@ section{padding-top:90px;padding-bottom:90px;padding-left:40px;padding-right:40p
   text-transform:uppercase;letter-spacing:2px;font-size:0.78rem;}
 
 /* ---- In-store-only notice ---- */
-.instore{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1000px;margin:0 auto 44px;align-items:stretch;}
+.instore-head{font-size:0.65rem;letter-spacing:5px;text-transform:uppercase;color:var(--gold);
+  font-weight:700;text-align:center;margin-top:46px;margin-bottom:18px;}
+.instore{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1000px;margin:0 auto;align-items:stretch;}
 .instore-card{border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.02);
   padding-top:20px;padding-bottom:20px;padding-left:24px;padding-right:24px;display:flex;flex-direction:column;}
 .instore-card h4{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:2px;color:var(--gold);margin-bottom:6px;}
@@ -396,8 +398,9 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
 
       <!-- STEP 1 -->
       <div class="panel active" id="panel-1">
-        <div class="instore" id="instore"></div>
         <div id="cats"></div>
+        <div class="instore-head" id="instore-head">Ordered in store</div>
+        <div class="instore" id="instore"></div>
         <p class="form-msg" id="msg-1"></p>
         <p class="deposit-rule">A single <b>&pound;20</b> deposit secures your whole order, however much you add. It comes off your final bill &mdash; the balance is settled in store when you collect.</p>
         <div class="chosen" id="chosen" hidden>
@@ -599,7 +602,12 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
   /* ---------- render: notices ---------- */
   function renderNotices() {
     var wrap = $('instore');
-    if (!C.inStoreOnly || !C.inStoreOnly.length) { wrap.hidden = true; return; }
+    var heading = $('instore-head');
+    if (!C.inStoreOnly || !C.inStoreOnly.length) {
+      wrap.hidden = true;
+      if (heading) { heading.hidden = true; }
+      return;
+    }
     C.inStoreOnly.forEach(function (n) {
       var card = el('div', 'instore-card');
       card.appendChild(el('h4', null, n.name));
