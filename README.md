@@ -17,14 +17,16 @@ clickable end to end — **no payment is taken and no emails are sent.**
 ## What we still need from the shop
 
 1. **A read-back of the item list.** Every product is in `catalogue.js`,
-   grouped the way it appears on the page. Worth checking the spelling of
-   **"Boneless Draft of Pork Joint"** in particular.
+   grouped the way it appears on the page. Worth a read-back of the names, and of
+   **"Boneless Draft of Pork Joint"** in particular: "draft" is genuine Midlands
+   butchery language rather than a typo, but it is trade language, so it may
+   want a short line underneath saying what the cut is.
 2. **A read-back of the joint sizing limits.** The beef, pork and lamb joints
    are sized by the customer — their own weight in kg, or a number of people
    for the butchers to size. Each joint has a kg range and a maximum headcount;
    those figures are **our starting suggestions, not the shop's** — they need
    Richard's eye before go-live.
-3. **The orders-close date.** Currently set to Monday 14 December.
+3. **The orders-close date.** Currently set to Monday 7 December. Anything after that is taken in store.
 
 ## How it works
 
