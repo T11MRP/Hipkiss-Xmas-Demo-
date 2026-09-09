@@ -19,12 +19,12 @@ clickable end to end — **no payment is taken and no emails are sent.**
 1. **A read-back of the item list.** Every product is in `catalogue.js`,
    grouped the way it appears on the page. Worth checking the spelling of
    **"Boneless Draft of Pork Joint"** in particular.
-1. **A read-back of the joint sizing limits.** The beef, pork and lamb joints
+2. **A read-back of the joint sizing limits.** The beef, pork and lamb joints
    are sized by the customer — their own weight in kg, or a number of people
    for the butchers to size. Each joint has a kg range and a maximum headcount;
    those figures are **our starting suggestions, not the shop's** — they need
    Richard's eye before go-live.
-2. **The orders-close date.** Currently set to Monday 14 December.
+3. **The orders-close date.** Currently set to Monday 14 December.
 
 ## How it works
 
@@ -48,8 +48,17 @@ item gets a plain **Add to order** button instead. An option can also carry a
 
 ## Note on this preview
 
-This is the front end only. Taking real payments and sending confirmation
-emails needs the two small server functions that sit alongside these files —
-they aren't in this repo, and GitHub Pages could not run them anyway. On the
-live site the "Pay Deposit" button goes to Stripe; here it skips straight to
-a sample confirmation so the whole journey can be reviewed.
+This repo now holds the whole system, front end and server code together, and
+it behaves differently depending on where it is served from.
+
+On **GitHub Pages**, this address, it runs as a preview. The "Pay Deposit"
+button skips straight to a sample confirmation, so the whole journey can be
+clicked through without a card and without anything being charged. GitHub
+Pages cannot run server code, so this address will always be a preview.
+
+On **Netlify**, the same files run the real thing. The page checks the address
+it is being served from and switches itself, so there is no flag to remember
+and no chance of the two drifting apart.
+
+The `netlify/functions/` folder holds the server code that takes the deposit
+through Stripe and sends the two confirmation emails.
