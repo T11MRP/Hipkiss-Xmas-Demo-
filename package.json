@@ -1,0 +1,9 @@
+{
+  "name": "hipkiss-farm-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hipkiss Farm Shop website with Christmas pre-orders",
+  "dependencies": {
+    "stripe": "^16.12.0"
+  }
+}

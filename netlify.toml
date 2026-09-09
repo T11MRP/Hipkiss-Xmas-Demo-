@@ -1,0 +1,25 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+  command = "echo 'static site — nothing to build'"
+
+[functions]
+  node_bundler = "esbuild"
+  # catalogue.js sits outside the functions folder, so bundle it in explicitly
+  included_files = ["catalogue.js"]
+
+# Stripe signs the raw request body, so it must not be parsed or altered
+[functions."stripe-webhook"]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/catalogue.js"
+  [headers.values]
+    Cache-Control = "public, max-age=300"
