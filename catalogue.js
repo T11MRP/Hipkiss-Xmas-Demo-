@@ -42,8 +42,8 @@
     sizeHelp: 'Still not sure? Give us a ring on 01902 965477 and we\u2019ll talk it through.',
 
     /* CONFIRM WITH RICHARD before go-live. Orders stop at 23:59 on this date. */
-    ordersCloseISO: '2026-12-14',
-    ordersCloseLabel: 'Monday 14 December',
+    ordersCloseISO: '2026-12-07',
+    ordersCloseLabel: 'Monday 7 December',
 
     collectionDates: [
       { id: 'dec21', label: 'Monday 21 December',    hours: '8am – 5pm' },
