@@ -62,6 +62,31 @@ function resolveLine(line) {
       people = n;
       optionLabel = 'For ' + n + (n === 1 ? ' person' : ' people') + ' \u2014 butcher to size';
 
+    } else if (item.sizeAfterOption) {
+      /* Two answers for one product: the option above (a stuffing, say) and
+         then a size. Exactly one sizing route must come with it. */
+      const hasW = line.customWeight !== null && line.customWeight !== undefined && line.customWeight !== '';
+      const hasP = line.people !== null && line.people !== undefined && line.people !== '';
+      if (hasW === hasP) { return null; }            // need one route, not both, not neither
+
+      if (hasW) {
+        const cfg = item.custom || { min: 0.5, max: 10 };
+        const w = Number(line.customWeight);
+        if (!Number.isFinite(w)) { return null; }
+        const r = Math.round(w * 10) / 10;
+        if (Math.abs(r - w) > 1e-6) { return null; }
+        if (r < cfg.min || r > cfg.max) { return null; }
+        customWeight = r;
+        optionLabel = o.label + ', ' + String(r) + 'kg';
+      } else {
+        const cfg = item.people || { min: 1, max: 30 };
+        const n = Number(line.people);
+        if (!Number.isInteger(n)) { return null; }
+        if (n < cfg.min || n > cfg.max) { return null; }
+        people = n;
+        optionLabel = o.label + ', for ' + n + (n === 1 ? ' person' : ' people') + ' \u2014 butcher to size';
+      }
+
     } else {
       if (line.customWeight != null || line.people != null) { return null; }
       optionLabel = o.label;
