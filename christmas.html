@@ -169,6 +169,10 @@ section{padding-top:90px;padding-bottom:90px;padding-left:40px;padding-right:40p
   border:1px solid rgba(201,147,58,0.35);background:rgba(201,147,58,0.05);
   padding-top:13px;padding-bottom:13px;padding-left:16px;padding-right:16px;}
 .cw.show{display:flex;}
+/* the second question on a two-part product, revealed once the first is answered */
+.size-row{display:none;margin-top:18px;}
+.size-row.show{display:block;}
+.size-row .opt-label{margin-top:0;}
 .cw label{font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;}
 .cw .wrapin{position:relative;display:inline-flex;align-items:center;}
 .cw input{width:118px;background:rgba(10,10,10,0.6);border:1px solid rgba(201,147,58,0.35);color:var(--white);
@@ -693,8 +697,17 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
     /* Options that ask the customer to type something: a weight, or how
        many people they are feeding. Nothing is added to the order until
        that number is usable. */
+    /* Some products ask two questions: an option (a stuffing, say) and then
+       a size. The sizing routes below are added underneath the options. */
+    var sizeAfter = !!(item.sizeAfterOption && item.options && item.options.length);
+    var sizeRoutes = sizeAfter ? [
+      { id: 'custom', custom: true, label: 'Choose my own weight',   serves: 'Tell us the size in kg' },
+      { id: 'people', people: true, label: 'Not sure of the weight?', serves: 'Tell us how many you\u2019re feeding' }
+    ] : [];
+
     var sizers = [];
     choices.forEach(function (o) { if (o.custom || o.people) { sizers.push(o); } });
+    sizeRoutes.forEach(function (o) { sizers.push(o); });
 
     if (sizers.length && C.weightNote) { body.appendChild(el('div', 'single-note', C.weightNote)); }
 
@@ -754,6 +767,33 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
 
     body.appendChild(chooseRow);
 
+    /* --- the sizing row, for products that ask an option and then a size --- */
+    var sizeRow = null;
+    if (sizeAfter) {
+      sizeRow = el('div', 'size-row');
+      sizeRow.appendChild(el('div', 'opt-label', item.sizeLabel || 'Then tell us the size'));
+      var sOpts = el('div', 'opts');
+      sOpts.setAttribute('role', 'group');
+      sOpts.setAttribute('aria-label', item.name + ' \u2014 size');
+      sizeRoutes.forEach(function (o) {
+        var sb = el('button', 'opt two pick sizer');
+        sb.type = 'button';
+        sb.appendChild(el('span', 'opt-main', o.label));
+        sb.appendChild(el('span', 'opt-sub', o.serves));
+        sb.setAttribute('aria-pressed', 'false');
+        sb.setAttribute('aria-label', item.name + ' \u2014 ' + o.label + ', ' + o.serves);
+        sb._optionId = o.id;
+        sb._sizer = true;
+        sb._plain = o.label;
+        sb._picked = o.label;
+        sb.addEventListener('click', function () { choose(o); });
+        sOpts.appendChild(sb);
+        buttons.push(sb);
+      });
+      sizeRow.appendChild(sOpts);
+      body.appendChild(sizeRow);
+    }
+
     /* --- one typed panel per sizing route: a weight, or a headcount --- */
     var panels = [];
     sizers.forEach(function (o) {
@@ -807,7 +847,73 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
       return -1;
     }
 
+    function stuffingLabelOf(id) {
+      for (var i = 0; i < choices.length; i++) {
+        if ((choices[i].id || '') === id) { return choices[i].label; }
+      }
+      return '';
+    }
+
+    function focusRoute(routeId) {
+      panels.forEach(function (pn) {
+        if (pn.optionId === routeId) { try { pn.input.focus(); } catch (e) {} }
+      });
+    }
+
+    /* Products that ask an option and then a size. Nothing joins the order
+       until both are answered, and clearing either one takes it back out. */
+    function chooseSized(o) {
+      var at = currentIndex();
+      var held = pendingWeights[pkey];
+      var stuff = at > -1 ? chosen[at].optionId : (held ? held.optionId : null);
+      var route = at > -1 ? chosen[at].sizeRoute : (held ? held.route : null);
+      var qty = at > -1 ? chosen[at].qty : (held ? held.qty : 1);
+
+      if (!(o.custom || o.people)) {                 // an option was tapped
+        if (stuff === o.id) {                        // tapping it again clears the lot
+          if (at > -1) { chosen.splice(at, 1); }
+          delete pendingWeights[pkey];
+          flash('msg-1', '');
+          refreshAll();
+          return;
+        }
+        if (at > -1) {                               // already sized: just swap it over
+          chosen[at].optionId = o.id;
+          chosen[at].optionLabel = o.label + ', ' + chosen[at].sizeLabel;
+          chosen[at].key = keyOf(cat.id, item.id, o.id + '|' + chosen[at].sizeRoute);
+          flash('msg-1', '');
+          refreshAll();
+          return;
+        }
+        pendingWeights[pkey] = { name: item.name, qty: qty, optionId: o.id, route: route };
+        flash('msg-1', '');
+        refreshAll();
+        if (route) { focusRoute(route); }
+        return;
+      }
+
+      if (!stuff) {                                  // size before option
+        flash('msg-1', 'Choose an option above first, then tell us the size.');
+        return;
+      }
+
+      if (route === o.id) {                          // tapping the live route clears the size
+        if (at > -1) { chosen.splice(at, 1); }
+        pendingWeights[pkey] = { name: item.name, qty: qty, optionId: stuff, route: null };
+        flash('msg-1', '');
+        refreshAll();
+        return;
+      }
+
+      if (at > -1) { chosen.splice(at, 1); }         // switching between the two routes
+      pendingWeights[pkey] = { name: item.name, qty: qty, optionId: stuff, route: o.id };
+      flash('msg-1', '');
+      refreshAll();
+      focusRoute(o.id);
+    }
+
     function choose(o) {
+      if (sizeAfter) { chooseSized(o); return; }
       /* A sizing button opens its box rather than adding anything \u2014 there is
          nothing to add until we know the weight or the number of people. */
       if (o.custom || o.people) {
@@ -882,8 +988,14 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
 
       function park(message) {                 // not orderable (yet)
         var a = currentIndex();
-        if (a > -1 && chosen[a].optionId === pn.optionId) { chosen.splice(a, 1); }
-        pendingWeights[pkey] = { name: item.name, qty: qty, optionId: pn.optionId };
+        if (sizeAfter) {
+          var keepStuff = a > -1 ? chosen[a].optionId : (held ? held.optionId : null);
+          if (a > -1) { chosen.splice(a, 1); }
+          pendingWeights[pkey] = { name: item.name, qty: qty, optionId: keepStuff, route: pn.optionId };
+        } else {
+          if (a > -1 && chosen[a].optionId === pn.optionId) { chosen.splice(a, 1); }
+          pendingWeights[pkey] = { name: item.name, qty: qty, optionId: pn.optionId };
+        }
         pn.msg.textContent = message || '';
         refreshAll();
       }
@@ -924,12 +1036,28 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
       delete pendingWeights[pkey];
 
       var idx = currentIndex();
-      var fields = {
-        optionId: pn.optionId, optionLabel: label,
-        customWeight: pn.isPeople ? null : value,
-        people: pn.isPeople ? value : null,
-        key: keyOf(cat.id, item.id, pn.optionId)
-      };
+      var fields;
+      if (sizeAfter) {
+        var stuffId = idx > -1 ? chosen[idx].optionId : (held ? held.optionId : null);
+        if (!stuffId) { park(''); return; }
+        var sizeLabel = pn.isPeople
+          ? ('for ' + value + (value === 1 ? ' person' : ' people'))
+          : (fmtKg(value) + 'kg');
+        fields = {
+          optionId: stuffId, sizeRoute: pn.optionId, sizeLabel: sizeLabel,
+          optionLabel: stuffingLabelOf(stuffId) + ', ' + sizeLabel,
+          customWeight: pn.isPeople ? null : value,
+          people: pn.isPeople ? value : null,
+          key: keyOf(cat.id, item.id, stuffId + '|' + pn.optionId)
+        };
+      } else {
+        fields = {
+          optionId: pn.optionId, optionLabel: label,
+          customWeight: pn.isPeople ? null : value,
+          people: pn.isPeople ? value : null,
+          key: keyOf(cat.id, item.id, pn.optionId)
+        };
+      }
       if (idx > -1) {
         for (var f in fields) { if (fields.hasOwnProperty(f)) { chosen[idx][f] = fields[f]; } }
       } else {
@@ -940,6 +1068,7 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
         chosen.push({
           key: fields.key, catId: cat.id, itemId: item.id, optionId: fields.optionId,
           catName: cat.name, itemName: item.name, optionLabel: fields.optionLabel,
+          sizeRoute: fields.sizeRoute || null, sizeLabel: fields.sizeLabel || null,
           customWeight: fields.customWeight, people: fields.people, qty: qty
         });
       }
@@ -974,16 +1103,31 @@ footer{background:#080808;padding-top:50px;padding-bottom:30px;padding-left:40px
       /* whichever sizing route is live: one being filled in, or one already set */
       var openId = held ? held.optionId : (active ? active.optionId : null);
 
+      /* Two-question products track the option and the size separately. */
+      var liveStuff = null, liveRoute = null;
+      if (sizeAfter) {
+        liveStuff = active ? active.optionId : (held ? held.optionId : null);
+        liveRoute = active ? active.sizeRoute : (held ? held.route : null);
+      }
+
       buttons.forEach(function (b) {
-        var on = b._sizer ? (openId === b._optionId)
-                          : (!!active && !held && active.optionId === b._optionId);
+        var on;
+        if (sizeAfter) {
+          on = b._sizer ? (liveRoute === b._optionId) : (liveStuff === b._optionId);
+        } else {
+          on = b._sizer ? (openId === b._optionId)
+                        : (!!active && !held && active.optionId === b._optionId);
+        }
         b.classList.toggle('on', on);
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
         if (b._plain !== b._picked) { b.textContent = on ? b._picked : b._plain; }
       });
 
+      /* The size question only appears once the option above is answered. */
+      if (sizeRow) { sizeRow.classList.toggle('show', !!liveStuff); }
+
       panels.forEach(function (pn) {
-        var show = openId === pn.optionId;
+        var show = sizeAfter ? (liveRoute === pn.optionId) : (openId === pn.optionId);
         pn.box.classList.toggle('show', show);
         if (!show && pn.input.value !== '') { pn.input.value = ''; pn.msg.textContent = ''; }
       });
