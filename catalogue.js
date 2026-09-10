@@ -69,7 +69,10 @@
           {
             id: 'crown-boneless',
             name: 'Boneless Turkey Crown',
-            note: 'Variable weight — we’ll size it with you.',
+            sizeAfterOption: true,
+            sizeLabel: 'Then tell us the size',
+            custom: { min: 1, max: 6 },
+            people: { min: 1, max: 20 },
             optionsLabel: 'Choose your stuffing',
             options: [
               { id: 'stuffing', label: 'With stuffing' },
@@ -80,7 +83,10 @@
           {
             id: 'crown-bacon',
             name: 'Boneless Turkey Crown Wrapped in Bacon',
-            note: 'Variable weight — we’ll size it with you.',
+            sizeAfterOption: true,
+            sizeLabel: 'Then tell us the size',
+            custom: { min: 1, max: 6 },
+            people: { min: 1, max: 20 },
             optionsLabel: 'Choose your stuffing',
             options: [
               { id: 'stuffing', label: 'With stuffing' },
