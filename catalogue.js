@@ -48,8 +48,8 @@
     collectionDates: [
       { id: 'dec21', label: 'Monday 21 December',    hours: '8am – 5pm' },
       { id: 'dec22', label: 'Tuesday 22 December',   hours: '8am – 5pm' },
-      { id: 'dec23', label: 'Wednesday 23 December', hours: '8am – 5pm' },
-      { id: 'dec24', label: 'Thursday 24 December',  hours: '8am – 1pm' }
+      { id: 'dec23', label: 'Wednesday 23 December', hours: '8am – 8pm' },
+      { id: 'dec24', label: 'Thursday 24 December',  hours: '8am – 3pm' }
     ],
 
     /* Shown as notices at the top of the order builder. */
